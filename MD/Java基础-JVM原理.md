@@ -76,6 +76,7 @@ JVM虚拟机内存模型实现规范：
 4. 如果Survivor空间无法容纳新生代中Minor GC之后还存活的对象
 
 ### GC回收机制
+优先看这部分文章：[GC - Java 垃圾回收基础知识](https://pdai.tech/md/java/jvm/java-jvm-gc.html)
 #### 回收对象
 不可达对象：通过一系列的GC Roots的对象作为起点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链相连时则此对象是不可用的。  
 GC Roots包括：虚拟机栈中引用的对象、方法区中类静态属性引用的对象、方法区中常量引用的对象、本地方法栈中JNI（Native方法）引用的对象。
@@ -88,9 +89,16 @@ GC Roots包括：虚拟机栈中引用的对象、方法区中类静态属性引
 新生代因为每次GC都有大批对象死去，只需要付出少量存活对象的复制成本且无碎片所以使用“复制算法”  
 老年代因为存活率高、没有分配担保空间，所以使用“标记-清理”或者“标记-整理”算法
 
+
 复制算法：将可用内存按容量划分为Eden、from survivor、to survivor，分配的时候使用Eden和一个survivor，Minor GC后将存活的对象复制到另一个survivor，然后将原来已使用的内存一次清理掉。这样没有内存碎片。  
+![image](https://github.com/studentytj/Java-Interview-update/assets/16250682/ace30f88-fb87-4f2e-a381-ab7580a12c49)
+
 标记-清除：首先标记出所有需要回收的对象，标记完成后统一回收被标记的对象。会产生大量碎片，导致无法分配大对象从而导致频繁GC。  
+![image](https://github.com/studentytj/Java-Interview-update/assets/16250682/28a54b12-2586-403f-9b7a-07213e913eb4)
+
 标记-整理：首先标记出所有需要回收的对象，让所有存活的对象向一端移动。
+![image](https://github.com/studentytj/Java-Interview-update/assets/16250682/25eda6f5-482c-42ba-925e-6fb37ebc644a)
+
 
 #### Minor GC条件
 当Eden区空间不足以继续分配对象，发起Minor GC。
